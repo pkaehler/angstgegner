@@ -2,10 +2,15 @@
 name = "api"
 version = "0.1.0"
 description = ""
-authors = ["pkaehler <philipp.kaehler@googlemail.com>"]
+authors = ["engineers@angst-gegner.de>"]
+
+[[tool.poetry.source]]
+name = "pypi-global"
+url = "https://pypi.python.org/simple"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.9"
+fastapi = "^0.70.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
