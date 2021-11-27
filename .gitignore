@@ -1,0 +1,15 @@
+.cache/
+venv/
+.venv/
+__pycache__/
+
+# Directories for generated content
+/dist/
+/data/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
