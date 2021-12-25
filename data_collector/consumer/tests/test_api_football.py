@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def input_data() -> dict:
     # think about better solution for path
     # this path only works if pytest is executed one level above
-    path = 'tests/data/world_france_germany.json'
+    path = 'tests/input/world_france_germany.json'
     with open(path, 'r') as f:
         jsondict = json.load(f)
     return jsondict
