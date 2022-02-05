@@ -1,3 +1,3 @@
 .PHONY: get-league-data
 get-league-data:
-	poetry run
+	poetry run python consumer/api.py

@@ -3,6 +3,8 @@ import json
 import requests
 import logging
 
+from util.common import check_file_exists_in
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -20,8 +22,6 @@ def save_json(path: str, file) -> bool:
 def download_data(url, headers, payload):
     logger.info(f'send request to {url}')
     response = requests.request("GET", url, headers=headers, data=payload)
-
-    logger.info(response.text)
     raw_leagues_format = json.loads(response.text)
     return raw_leagues_format
 
@@ -36,8 +36,11 @@ if __name__ == '__main__':
         'x-rapidapi-key': f'{apikey}',
         'x-rapidapi-host': 'v3.football.api-sports.io'
     }
-    storage_path = '../data/raw_leagues.json'
-    data = download_data(url=url, headers=headers, payload=payload)
-    if save_json(path=storage_path,file=data):
-        logger.info(f'File saved to {storage_path}')
+    storage_path = 'data/raw_leagues.json'
+    if check_file_exists_in(storage_path):
+        logger.info(f'File {storage_path} already exists.')
+    else:
+        data = download_data(url=url, headers=headers, payload=payload)
+        if save_json(path=storage_path,file=data):
+            logger.info(f'File saved to {storage_path}')
 
