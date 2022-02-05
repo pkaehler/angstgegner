@@ -1,4 +1,6 @@
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from consumer.database.League import League
 
 
 def get_connection_string(host: str = "localhost",
@@ -20,3 +22,12 @@ def get_engine(connection_string):
 
 
 test = get_engine(get_connection_string(db="angstgegner"))
+
+test_league = League(id=1,name='Foobar', country='DE')
+
+Session = sessionmaker(bind=test)
+session = Session()
+session.add(test_league)
+
+foobar = session.query(League)
+print(foobar)
