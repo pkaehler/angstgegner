@@ -1,22 +1,14 @@
 import os
 import json
+
+import click as click
 import requests
 import logging
 
-from util.common import check_file_exists_in
+from util.common import check_file_exists_in, save_json
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-
-def save_json(path: str, file) -> bool:
-    try:
-        with open(path, 'w', encoding='utf-8') as f:
-            json.dump(file, f)
-        return True
-    except Exception as e:
-        logger.warning(f'Could not save file due to: {e}')
-        return False
 
 
 def download_data(url, headers, payload):
@@ -26,21 +18,35 @@ def download_data(url, headers, payload):
     return raw_leagues_format
 
 
-if __name__ == '__main__':
-    apikey = os.environ.get('FOOTBALL_COM_API')
+def _get_league_data(headers: dict, payload:dict):
+    logger.info('Try to fetch league data')
     endpoint = f"leagues"
     filters = f"?"
     url = f"https://v3.football.api-sports.io/{endpoint}"
+    storage_path = 'data/raw_leagues.json'
+    # if check_file_exists_in(storage_path):
+    if False:
+        logger.info(f'File {storage_path} already exists.')
+    else:
+        data = download_data(url=url, headers=headers, payload=payload)
+        if save_json(file_path=storage_path,file=data):
+            logger.info(f'File saved to {storage_path}')
+
+
+@click.command()
+@click.option("--endpoint", help="endpoint to query (league,...)", type=str)
+def get_data(endpoint: str):
+    apikey = os.environ.get('FOOTBALL_COM_API')
     payload = {}
     headers = {
         'x-rapidapi-key': f'{apikey}',
         'x-rapidapi-host': 'v3.football.api-sports.io'
     }
-    storage_path = 'data/raw_leagues.json'
-    if check_file_exists_in(storage_path):
-        logger.info(f'File {storage_path} already exists.')
+    if endpoint == 'league':
+        _get_league_data(headers=headers, payload=payload)
     else:
-        data = download_data(url=url, headers=headers, payload=payload)
-        if save_json(path=storage_path,file=data):
-            logger.info(f'File saved to {storage_path}')
+        logger.info(f'Not implemented yet: "{endpoint}"')
 
+
+if __name__ == '__main__':
+    get_data()

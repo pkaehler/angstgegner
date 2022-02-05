@@ -13,6 +13,7 @@ python = "^3.9"
 sqlalchemy = "1.4.22"
 requests = "2.25.0"
 psycopg2-binary = "^2.9.2"
+click = "^8.0.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
