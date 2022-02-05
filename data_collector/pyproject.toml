@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "consumer"
-version = "2021.12.25.0"
+name = "data-aggregator"
+version = "2022.2.5.0"
 description = ""
 authors = ["Angstgegner <engineers@angst-gegner.de>"]
 
