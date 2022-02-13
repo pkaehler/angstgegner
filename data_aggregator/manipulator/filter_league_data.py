@@ -1,11 +1,11 @@
-from util.common import check_file_exists_in
+from util.common import check_file_exists_in, open_json
 
 # todo:
 # define schema to keep only this information
-# "response": 
+# "response":
 #   [
 #     {
-#       "league": 
+#       "league":
 #           {
 #               "id": int,
 #               "name": str,
@@ -40,20 +40,31 @@ from util.common import check_file_exists_in
 #                         "odds": bool
 #                     }
 #                 },
-#           
+#
 #             ]
 #         },
 
-input_file_name = 'raw_league.json'
-output_file = 'league.json'
-path = '../data/'
+
+def clean_seasons(list_of_seasons):
+    return [elem['year'] for elem in list_of_seasons]
 
 
-def filter_dict(jsondict: dict, filter) -> dict:
+def filter_dict(list_of_dicts: list[dict], filter_items: tuple) -> list[dict]:
     """
-    Pass a dict
-    :param dict: Json /dict
-    :param filter: Tuple of key, eg ('id', 'foobar')
+    Pass a list of dicts
+    :param list_of_dicts:
+    :param filter_items: Tuple of key, eg ('id', 'foobar')
     :return: dict
     """
-    return {k: v for k, v in jsondict if k in filter}
+    result = []
+    for elem in list_of_dicts:
+        result.append({k: v for k, v in elem.items() if k in filter_items})
+    return result
+
+
+def get_all_ids_and_seasons() -> list:
+    """
+
+    :return: List of all league ids
+    """
+    pass
