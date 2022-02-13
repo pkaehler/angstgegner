@@ -15,10 +15,16 @@ def only_for_testing(endpoint: str):
     logger.debug(f'DEBUG: testing entrypoint')
     storage_path = f"data/raw_{endpoint}.json"
     filtered = filter_dict(open_json(storage_path)["response"], ('league', 'seasons'))
+    prepared = []
     for item in filtered:
+        out = {}
         for k, v in item.items():
-
-            cleaned = clean_seasons()
+            if k == 'league':
+                out['id'] = item[k]['id']
+                out['name'] = item[k]['name']
+            if k == 'seasons':
+                out['seasons'] = clean_seasons(v)
+        prepared.append(out)
 
 
 if __name__ == '__main__':
