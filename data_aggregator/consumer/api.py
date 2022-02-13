@@ -48,21 +48,5 @@ def get_data(endpoint: str):
         logger.info(f'Not implemented yet: "{endpoint}". Choose one of the following: {endpoints}')
 
 
-@click.command()
-@click.option('--test/--no-shout', default=False)
-def only_for_testing(endpoint: str):
-    endpoints = ('leagues', 'teams')
-    apikey = os.environ.get('FOOTBALL_COM_API')
-    payload = {}
-    headers = {
-        'x-rapidapi-key': f'{apikey}',
-        'x-rapidapi-host': 'v3.football.api-sports.io'
-    }
-    if endpoint in endpoints:
-        _get_data_from(endpoint=endpoint, headers=headers, payload=payload)
-    else:
-        logger.info(f'Not implemented yet: "{endpoint}". Choose one of the following: {endpoints}')
-
-
 if __name__ == '__main__':
     get_data()
