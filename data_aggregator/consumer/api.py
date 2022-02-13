@@ -24,8 +24,7 @@ def _get_league_data(headers: dict, payload:dict):
     filters = f"?"
     url = f"https://v3.football.api-sports.io/{endpoint}"
     storage_path = 'data/raw_leagues.json'
-    # if check_file_exists_in(storage_path):
-    if False:
+    if check_file_exists_in(storage_path):
         logger.info(f'File {storage_path} already exists.')
     else:
         data = download_data(url=url, headers=headers, payload=payload)

@@ -57,7 +57,3 @@ def filter_dict(jsondict: dict, filter) -> dict:
     :return: dict
     """
     return {k: v for k, v in jsondict if k in filter}
-
-
-if check_file_exists_in(file_path=path + input_file_name):
-    filter_dict(path + input_file_name)
