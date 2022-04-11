@@ -28,8 +28,9 @@ def only_for_testing(endpoint: str):
         "teams": "teams" + teams_per_season_endpoint(),
     }
     logger.debug(f'DEBUG: testing entrypoint')
-    storage_path = f"data/raw_{endpoint}{mapper}.json"
+    storage_path = f"data/raw_{mapper}.json"
     filtered = filter_dict(open_json(storage_path)["response"], ('league', 'seasons'))
+    print(f'filtered dict: {filtered}')
     prepared = []
     # season and leagues id from raw leagues
 

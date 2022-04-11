@@ -22,15 +22,15 @@ def teams_per_season_endpoint() -> str:
     returns query params
     """
     #https://v3.football.api-sports.io/teams?league=78&season=2021
-    return "?league=7&season=2021"
+    return "?league=78&season=2021"
 
 
 def _get_data_from(endpoint: str, headers: dict, payload: dict):
     endpoint = f"{endpoint}"
     mapper = {
         "": "",
-        "teams": "teams" + teams_per_season_endpoint(), 
-        "leagues": "leagues", 
+        "teams_per_season": "teams" + teams_per_season_endpoint(), 
+        "all_leagues": "leagues", 
     }
     url = f"https://v3.football.api-sports.io/{mapper[endpoint]}"
     storage_path = f"data/raw_{endpoint}.json"
