@@ -17,21 +17,22 @@ def download_data(url, headers, payload):
     raw_data = json.loads(response.text)
     return raw_data
 
-def teams_endpoint() -> str:
+def teams_per_season_endpoint() -> str:
     """
     returns query params
     """
     #https://v3.football.api-sports.io/teams?league=78&season=2021
-    return "?/league=7&season=2021"
+    return "?league=7&season=2021"
 
 
 def _get_data_from(endpoint: str, headers: dict, payload: dict):
     endpoint = f"{endpoint}"
     mapper = {
         "": "",
-        "teams": teams_endpoint()
+        "teams": "teams" + teams_per_season_endpoint(), 
+        "leagues": "leagues", 
     }
-    url = f"https://v3.football.api-sports.io/{endpoint}/{mapper[endpoints]}"
+    url = f"https://v3.football.api-sports.io/{mapper[endpoint]}"
     storage_path = f"data/raw_{endpoint}.json"
     logger.info('Try to fetch data from {}')
     if check_file_exists_in(storage_path):
@@ -45,7 +46,7 @@ def _get_data_from(endpoint: str, headers: dict, payload: dict):
 @click.command()
 @click.option("--endpoint", help="endpoint to query (leagues,...)", type=str)
 def get_data(endpoint: str):
-    endpoints = ('leagues', 'teams')
+    endpoints = ('all_leagues', 'teams_per_season')
     apikey = os.environ.get('FOOTBALL_COM_API')
     payload = {}
     headers = {
