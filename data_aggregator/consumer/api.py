@@ -68,9 +68,10 @@ def get_data(ctx,endpoint: str):
         logger.info(f'Not implemented yet: "{endpoint}". Choose one of the following: {endpoints}')
 
 
-@click.command("filter-seasons-per-leagues")
-@click.option("--available-season-for-leagues", help="clean list of season(years) for a leagues or all leagues", required=False)
-def filter_all_seasons_per_leagues(ids: list())->dict:
+@cli.command("filter-seasons-per-leagues")
+@click.pass_context
+@click.option("--ids", help="clean list of season(years) for a leagues or all leagues", required=False)
+def filter_seasons_per_leagues(ctx, ids: list())->dict:
     """
     praram: ids list of int
     return: list of dicts eg 
