@@ -11,4 +11,18 @@ Content-root:
 
 This will be the source for all data handling, eg calling file_exists("data/foobar.json") would check if `.../data_aggregator/data/foobar.json` is existent.
 
+## Implemented:
+* Leagues:
+   * Leagues Info
+   * Country Info
+   * Season Info: Year and coverage
+* Teams:
+   * Team Info
+   * Venue Info
+* 
 
+* Season
+
+## Open endpoints:
+Check https://www.api-football.com/documentation-v3#section/Authentication/API-SPORTS-Account
+* Seasons
