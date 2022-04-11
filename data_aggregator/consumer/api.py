@@ -5,11 +5,11 @@ import click as click
 import requests
 import logging
 
-from util.common import check_file_exists_in, save_json
+from util.common import check_file_exists_in, save_json, open_json
+from manipulator.filter_league_data import filter_dict, clean_seasons
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 def download_data(url, headers, payload):
     logger.info(f'send request to {url}')
@@ -24,14 +24,15 @@ def teams_per_season_endpoint() -> str:
     #https://v3.football.api-sports.io/teams?league=78&season=2021
     return "?league=78&season=2021"
 
-
-def _get_data_from(endpoint: str, headers: dict, payload: dict):
-    endpoint = f"{endpoint}"
-    mapper = {
+mapper = {
         "": "",
         "teams_per_season": "teams" + teams_per_season_endpoint(), 
         "all_leagues": "leagues", 
     }
+
+
+def _get_data_from(endpoint: str, headers: dict, payload: dict):
+    endpoint = f"{endpoint}"
     url = f"https://v3.football.api-sports.io/{mapper[endpoint]}"
     storage_path = f"data/raw_{endpoint}.json"
     logger.info('Try to fetch data from {}')
@@ -43,9 +44,17 @@ def _get_data_from(endpoint: str, headers: dict, payload: dict):
             logger.info(f'File saved to {storage_path}')
 
 
-@click.command()
+@click.group("cli")
+@click.pass_context
+def cli(ctx):
+   """An example CLI for interfacing with a document"""
+   ctx.obj = "some context here"
+
+
+@cli.command("get-data")
+@click.pass_context
 @click.option("--endpoint", help="endpoint to query (leagues,...)", type=str)
-def get_data(endpoint: str):
+def get_data(ctx,endpoint: str):
     endpoints = ('all_leagues', 'teams_per_season')
     apikey = os.environ.get('FOOTBALL_COM_API')
     payload = {}
@@ -59,5 +68,36 @@ def get_data(endpoint: str):
         logger.info(f'Not implemented yet: "{endpoint}". Choose one of the following: {endpoints}')
 
 
+@click.command("filter-seasons-per-leagues")
+@click.option("--available-season-for-leagues", help="clean list of season(years) for a leagues or all leagues", required=False)
+def filter_all_seasons_per_leagues(ids: list())->dict:
+    """
+    praram: ids list of int
+    return: list of dicts eg 
+        [
+            {'id': 4, 'name': 'Euro Championship', 'seasons': [2008, 2012, 2016, 2020]}, 
+            {'id': 21, 'name': 'Confederations Cup', 'seasons': [2009, 2013, 2017]}, 
+            {'id': 61, 'name': 'Ligue 1', 'seasons': [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]}
+        ]
+    """
+    endpoint = 'all_leagues'
+    storage_path = f"data/raw_{endpoint}.json"
+    filtered = filter_dict(open_json(storage_path)["response"], ('league', 'seasons'))
+    prepared = []
+
+    for item in filtered:
+        out = {}
+        for k, v in item.items():
+            if k == 'league':
+                out['id'] = item[k]['id']
+                out['name'] = item[k]['name']
+            if k == 'seasons':
+                out['seasons'] = clean_seasons(v)
+        prepared.append(out)
+    if ids:
+        return {k: v for k,v in prepared.items() if k in ids}
+    else:
+        return prepared
+
 if __name__ == '__main__':
-    get_data()
+    cli()
