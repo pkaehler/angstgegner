@@ -65,7 +65,7 @@ def filter_dict(list_of_dicts: list[dict], filter_items: tuple) -> list[dict]:
     Pass a list of dicts
     :param list_of_dicts:
     :param filter_items: Tuple of key, eg ('id', 'foobar')
-    :return: dict
+    :return: list of dicts reduced to filter items
     """
     result = []
     for elem in list_of_dicts:
@@ -91,27 +91,23 @@ def filter_seasons_per_leagues(ids: [] = None) -> [{}]:
             {'id': 61, 'name': 'Ligue 1', 'seasons': [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]}
         ]
     """
-    print('debug starting filtering')
     endpoint = 'all_leagues'
     storage_path = f"data/raw_{endpoint}.json"
-    d = open_json(storage_path)["response"]
-    print(d)
-    filtered = filter_dict(d, ('league', 'seasons'))
+    # todo: feels wrong and too complex
+    # look for map functions here
+
+    filtered = filter_dict(open_json(storage_path)["response"], ('league', 'seasons'))
     prepared = []
 
     # todo: feels wrong and too complex
+    # look for map functions here
+    # add id filter
     for item in filtered:
-        out = {}
         for k, v in item.items():
-            if ids:
-                if item[k]['id'] in ids:
-                    clean_elem(item, k, v)
-            clean_elem(item, k, v)
-        prepared.append(out)
-
-        return prepared
+            prepared.append(clean_elem(item, k, v))
+    print(prepared)
+    return prepared
 
 
 if __name__ == '__main__':
     filter_seasons_per_leagues()
-    filter_seasons_per_leagues([4, 78])
