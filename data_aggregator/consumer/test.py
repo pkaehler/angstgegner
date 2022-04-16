@@ -1,31 +1,41 @@
+import click
+import pprint
+import json
+import os
+from consumer.api import mapper
 import logging
 
-import click as click
-from manipulator.filter_league_data import filter_dict, clean_seasons
-from util.common import open_json
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-@click.command()
+@click.group("cli")
+@click.pass_context
+def cli(ctx):
+   """An example CLI for interfacing with a document"""
+   ctx.obj = "some context here"
+
+
+@cli.command("get_data")
+@click.pass_context
 @click.option("--endpoint", help="endpoint to query (leagues,...)", type=str)
-def only_for_testing(endpoint: str):
-
-    logger.debug(f'DEBUG: testing entrypoint')
-    storage_path = f"data/raw_{endpoint}.json"
-    filtered = filter_dict(open_json(storage_path)["response"], ('league', 'seasons'))
-    prepared = []
-    for item in filtered:
-        out = {}
-        for k, v in item.items():
-            if k == 'league':
-                out['id'] = item[k]['id']
-                out['name'] = item[k]['name']
-            if k == 'seasons':
-                out['seasons'] = clean_seasons(v)
-        prepared.append(out)
-
+def get_data(ctx, endpoint):
+    print(endpoint)
+#     endpoints = ('all_leagues', 'teams_per_season')
+#     apikey = os.environ.get('FOOTBALL_COM_API')
+#     payload = {}
+#     headers = {
+#         'x-rapidapi-key': f'{apikey}',
+#         'x-rapidapi-host': 'v3.football.api-sports.io'
+#     }
+    pprint.pprint(ctx.obj)
+#     pprint.pprint(type(ctx.obj))
+#     print(endpoint)
+#     #if endpoint in endpoints:
+#     #    _get_data_from(endpoint=endpoint, headers=headers, payload=payload)
+#     #else:
+#     #    logger.info(f'Not implemented yet: "{endpoint}". Choose one of the following: {endpoints}')
 
 if __name__ == '__main__':
-    only_for_testing()
+   cli()

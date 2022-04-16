@@ -1,6 +1,18 @@
 .PHONY: get-league-data
 get-league-data:
-	poetry run python consumer/api.py --endpoint=${ENDPOINT}
+	poetry run python consumer/api.py get-data --endpoint=all_leagues
+
+.PHONY: get-teams-per-season-data
+get-teams-per-season-data:
+	poetry run python consumer/api.py get-data --endpoint=teams_per_season
+
+.PHONY: filter-seasons-for-all-leagues
+filter-seasons-for-all-leagues:
+	poetry run python consumer/api.py filter-seasons-per-leagues
+
+.PHONY: filter-seasons-for-leagues
+filter-seasons-for-leagues:
+	poetry run python consumer/api.py filter-seasons-per-leagues --ids=${IDS}
 
 .PHONY: test-consumer
 test-consumer:
