@@ -34,11 +34,11 @@ mapper = {
 }
 
 
-def _get_data_from(endpoint: str, headers: dict, payload: dict, *kwargs):
+def _get_data_from(endpoint: str, headers: dict, payload: dict, **kwargs):
     endpoint = f"{endpoint}"
-    if args:
-        for arg in args:
-            print(f'passed arg: {arg}')
+    if kwargs:
+        for key, value in kwargs.items():
+            print(f'passed arg: {key}: {value}')
     url = f"https://v3.football.api-sports.io/{mapper[endpoint]}"
     storage_path = f"data/raw_{endpoint}.json"
     logger.info(f'Try fetching data from {url}')
@@ -62,6 +62,8 @@ def cli(ctx):
 @cli.command("get-data")
 @click.pass_context
 @click.option("--endpoint", help="endpoint to query (leagues,...)", type=str)
+@click.option("--league-id", help="pass an id to query only one league", type=int, required=False)
+@click.option("--season", help="pass an id to query only one league", type=int, required=False)
 def get_data(ctx, endpoint: str, league_id: int = None, season: int = None):
     endpoints = ('all_leagues', 'teams_per_season')
     apikey = os.environ.get('FOOTBALL_COM_API')
@@ -82,7 +84,7 @@ def get_data(ctx, endpoint: str, league_id: int = None, season: int = None):
 @cli.command("filter-seasons-per-leagues")
 @click.pass_context
 @click.option("--ids", help="clean list of season(years) for a leagues or all leagues", required=False)
-def filter_seasons_per_leagues(ctx, ids: list()) -> dict:
+def filter_seasons_per_leagues(ctx, ids: []) -> dict:
     """
     praram: ids list of int
     return: list of dicts eg 
