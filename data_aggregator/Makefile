@@ -7,7 +7,7 @@ get-league-data:
 
 .PHONY: get-teams-per-season-data
 get-teams-per-season-data:
-	poetry run python consumer/api.py get-data --endpoint=teams_per_season
+	poetry run python consumer/api.py get-data --endpoint=teams_per_season --league-id=${LEAGUE_ID} --season=${SEASON}
 
 .PHONY: get-teams-for-season-and-league
 get-teams-for-season-and-league:
@@ -15,7 +15,7 @@ get-teams-for-season-and-league:
 
 .PHONY: filter-seasons-for-all-leagues
 filter-seasons-for-all-leagues:
-	poetry run python consumer/api.py filter-seasons-per-leagues
+	poetry run python manipulator/filter_league_data.py
 
 .PHONY: filter-seasons-for-leagues
 filter-seasons-for-leagues:
