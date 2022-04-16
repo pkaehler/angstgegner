@@ -1,45 +1,38 @@
 import os
-import json
-
 import click as click
-import requests
 import logging
 
-from util.common import check_file_exists_in, save_json, open_json
+from util.common import check_file_exists_in, save_json, open_json, _apply_kwargs, download_data
 from manipulator.filter_league_data import filter_dict, clean_seasons
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def download_data(url, headers, payload):
-    logger.info(f'send request to {url}')
-    response = requests.request("GET", url, headers=headers, data=payload)
-    raw_data = json.loads(response.text)
-    return raw_data
-
-
 def teams_per_season_endpoint(league: int, season: int) -> str:
     """
     returns query params
     """
-    # https://v3.football.api-sports.io/teams?league=78&season=2021
     return f"?league={league}8&season={season}"
 
 
 mapper = {
     "": "",
-    "teams_per_season": "teams" + teams_per_season_endpoint(78, 2021),
-    "all_leagues": "leagues",
+    "teams_per_season": {"endpoint": "teams",
+                         "query_params": teams_per_season_endpoint,
+                         },
+    "all_leagues": {"endpoint": "leagues",
+                    "query_params": None,
+                    },
 }
 
 
 def _get_data_from(endpoint: str, headers: dict, payload: dict, **kwargs):
     endpoint = f"{endpoint}"
+    url = f"https://v3.football.api-sports.io/{mapper[endpoint]['endpoint']}"
     if kwargs:
-        for key, value in kwargs.items():
-            print(f'passed arg: {key}: {value}')
-    url = f"https://v3.football.api-sports.io/{mapper[endpoint]}"
+        # TODO: apply check if kwargs return valid endpoint
+        url = url + _apply_kwargs(**kwargs)
     storage_path = f"data/raw_{endpoint}.json"
     logger.info(f'Try fetching data from {url}')
     if check_file_exists_in(storage_path):

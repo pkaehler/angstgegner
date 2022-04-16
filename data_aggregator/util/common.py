@@ -1,6 +1,7 @@
 import json
 import os
 import logging
+import requests
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -31,3 +32,14 @@ def open_json(file_path: str) -> dict:
     except Exception as e:
         logger.error(f'Could not open file due to: {e}')
         return {}
+
+
+def _apply_kwargs(**kwargs) -> str:
+    return "&".join(f'{k}={v}' for k, v in kwargs.items())
+
+
+def download_data(url, headers, payload):
+    logger.info(f'send request to {url}')
+    response = requests.request("GET", url, headers=headers, data=payload)
+    raw_data = json.loads(response.text)
+    return raw_data
