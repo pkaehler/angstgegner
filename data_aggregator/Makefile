@@ -19,7 +19,7 @@ filter-seasons-for-all-leagues:
 
 .PHONY: filter-seasons-for-leagues
 filter-seasons-for-leagues:
-	poetry run python consumer/api.py filter-seasons-per-leagues --ids=${IDS}
+	poetry run python manipulator/filter_league_data.py
 
 .PHONY: test-consumer
 test-consumer:

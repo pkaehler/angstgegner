@@ -1,6 +1,7 @@
 from util.common import check_file_exists_in, open_json
 import click as click
 
+
 # todo:
 # define schema to keep only this information
 # "response":
@@ -45,6 +46,15 @@ import click as click
 #             ]
 #         },
 
+def clean_elem(elem, k, v):
+    out = {}
+    if k == 'league':
+        out['id'] = elem[k]['id']
+        out['name'] = elem[k]['name']
+    if k == 'seasons':
+        out['seasons'] = clean_seasons(v)
+    return out
+
 
 def clean_seasons(list_of_seasons):
     return [elem['year'] for elem in list_of_seasons]
@@ -71,8 +81,7 @@ def get_all_ids_and_seasons() -> list:
     pass
 
 
-@click.option("--ids", help="clean list of season(years) for a leagues or all leagues", required=False)
-def filter_seasons_per_leagues(ids: []) -> {[]}:
+def filter_seasons_per_leagues(ids: [] = None) -> [{}]:
     """
     praram: ids list of int
     return: list of dicts eg
@@ -82,22 +91,27 @@ def filter_seasons_per_leagues(ids: []) -> {[]}:
             {'id': 61, 'name': 'Ligue 1', 'seasons': [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]}
         ]
     """
+    print('debug starting filtering')
     endpoint = 'all_leagues'
     storage_path = f"data/raw_{endpoint}.json"
-    filtered = filter_dict(open_json(storage_path)["response"], ('league', 'seasons'))
+    d = open_json(storage_path)["response"]
+    print(d)
+    filtered = filter_dict(d, ('league', 'seasons'))
     prepared = []
 
+    # todo: feels wrong and too complex
     for item in filtered:
         out = {}
         for k, v in item.items():
-            if k == 'league':
-                out['id'] = item[k]['id']
-                out['name'] = item[k]['name']
-            if k == 'seasons':
-                out['seasons'] = clean_seasons(v)
+            if ids:
+                if item[k]['id'] in ids:
+                    clean_elem(item, k, v)
+            clean_elem(item, k, v)
         prepared.append(out)
-    if ids:
-        print()
-        return [{k: v for k, v in prepared.items() if k in ids}]
-    else:
+
         return prepared
+
+
+if __name__ == '__main__':
+    filter_seasons_per_leagues()
+    filter_seasons_per_leagues([4, 78])
